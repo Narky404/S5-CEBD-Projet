@@ -1,0 +1,5 @@
+pour envoyer mes modifs au git il faut faire :
+
+git add 
+git commit -m "[CE QUE TU AS MODIF]"
+git push

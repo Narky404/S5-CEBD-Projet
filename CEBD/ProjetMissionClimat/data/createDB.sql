@@ -25,8 +25,8 @@ create table Mesures (
 
 --TODO Q4 Ajouter les créations des nouvelles tables
 
-CREATE TABLE Comunnes (
-    code_commune INTEGER,
+CREATE TABLE Communes (
+    code_commune INTEGER PRIMARY KEY,
     code_departement TEXT, --cas 1 to Many
     nom_commune TEXT,
     statut_commune TEXT,
@@ -34,57 +34,65 @@ CREATE TABLE Comunnes (
     population_commune INTEGER,
     superficie_commune INTEGER,
     code_canton_commune INTEGER,
-    code_arrondissement_commune INTEGER,
-    CONSTRAINT pk_commune PRIMARY KEY (code_commune),
-    CONSTRAINT fk_code_departement FOREIGN KEY (code_departement) REFERENCES Departements(code_departement)
+    code_arrondissement_commune INTEGER
+    --CONSTRAINT pk_commune PRIMARY KEY (code_commune),
+    --CONSTRAINT fk_code_departement FOREIGN KEY (code_departement) REFERENCES Departements(code_departement)
 );
 
-CREATE TABLE Travaux (
-    id_travaux INTEGER,
-    cout_total_HT_travaux FLOAT,
-    cout_induit_HT_travaux FLOAT,
-    annee_travaux INTEGER,
-    type_logement_travaux TEXT,
-    annee_construction_logement INTEGER,
-    code_region INTEGER, --nous somme dans la regle 1 to Many
-    CONSTRAINT pk_travaux PRIMARY KEY (id_travaux),
-    CONSTRAINT fk_code_region FOREIGN KEY (code_region) REFERENCES Regions(code_region)
-);
-
--- cas des 0..1 to Many
-CREATE TABLE Travaux_Departement( 
-    id_travaux INTEGER,
-    code_departement TEXT,
-    CONSTRAINT pk_travaux_departement PRIMARY KEY (id_travaux),
-    CONSTRAINT fk_id FOREIGN KEY (id_travaux) REFERENCES Travaux(id_travaux),
-    CONSTRAINT fk_code_dep FOREIGN KEY (code_departement) REFERENCES Departements(code_departement)
-);
+--CREATE TABLE Travaux (  id_travaux INTEGER AUTOINCREMENT,  cout_total_HT_travaux FLOAT,  cout_induit_HT_travaux FLOAT,  annee_travaux INTEGER,  type_logement_travaux TEXT,  annee_construction_logement INTEGER,
+--    code_region INTEGER, --nous somme dans la regle 1 to Many
+--    code_departement INTEGER, -- cas des 0..1 to Many
+--    CONSTRAINT pk_travaux PRIMARY KEY (id_travaux),
+--    CONSTRAINT fk_code_region FOREIGN KEY (code_region) REFERENCES Regions(code_region)
+--    CONSTRAINT fk_code_departement FOREIGN KEY (code_departement) REFERENCES Departements(code_departement)
+--);
 
 -- Heritage appliquer avec Reference, la clé primaire de Travaux va vers ses fils
 CREATE TABLE Isolations(
-    id_travaux INTEGER,
+    id_Isolation INTEGER PRIMARY KEY AUTOINCREMENT,
+    cout_total_HT_Isolation FLOAT,
+    cout_induit_HT_Isolation FLOAT,
+    annee_Isolation INTEGER,
+    type_logement_Isolation TEXT,
+    annee_construction_logement INTEGER,
+    code_region INTEGER, --nous somme dans la regle 1 to Many
+    code_departement TEXT, -- cas des 0..1 to Many
     poste TEXT,
     isolant TEXT,
     epaisseur INTEGER,
-    surface_isolation FLOAT,
-    CONSTRAINT pk_isolation PRIMARY KEY (id_travaux),
-    CONSTRAINT fk_isolation FOREIGN KEY (id_travaux) REFERENCES Travaux(id_travaux)
+    surface_isolation FLOAT
+    --CONSTRAINT pk_isolation PRIMARY KEY (id_Isolation)
+    --CONSTRAINT fk_code_departement FOREIGN KEY (code_departement) REFERENCES Departements(code_departement)
 );
 
 CREATE TABLE Chauffages(
-    id_travaux INTEGER,
+    id_Chauffage INTEGER PRIMARY KEY AUTOINCREMENT,
+    cout_total_HT_Chauffage FLOAT,
+    cout_induit_HT_Chauffage FLOAT,
+    annee_Chauffage INTEGER,
+    type_logement_Chauffage TEXT,
+    annee_construction_logement INTEGER,
+    code_region INTEGER, --nous somme dans la regle 1 to Many
+    code_departement TEXT, -- cas des 0..1 to Many
     energie_av_travaux TEXT,
     energie_installee TEXT,
     generateur TEXT,
-    type_chaudiere TEXT,
-    CONSTRAINT pk_isolation PRIMARY KEY (id_travaux),
-    CONSTRAINT fk_isolation FOREIGN KEY (id_travaux) REFERENCES Travaux(id_travaux)
+    type_chaudiere TEXT
+    --CONSTRAINT pk_isolation PRIMARY KEY (id_Chauffage)
+    --CONSTRAINT fk_code_departement FOREIGN KEY (code_departement) REFERENCES Departements(code_departement)
 );
 
 CREATE TABLE Photovoltaiques(
-    id_travaux INTEGER,
+    id_Photovoltaique INTEGER PRIMARY KEY AUTOINCREMENT,
+    cout_total_HT_Photovoltaique FLOAT,
+    cout_induit_HT_Photovoltaique FLOAT,
+    annee_Photovoltaique INTEGER,
+    type_logement_Photovoltaique TEXT,
+    annee_construction_logement INTEGER,
+    code_region INTEGER, --nous somme dans la regle 1 to Many
+    code_departement TEXT, -- cas des 0..1 to Many
     puissance_installee INTEGER,
-    type_panneaux TEXT,
-    CONSTRAINT pk_isolation PRIMARY KEY (id_travaux),
-    CONSTRAINT fk_isolation FOREIGN KEY (id_travaux) REFERENCES Travaux(id_travaux)
+    type_panneaux TEXT
+    --CONSTRAINT pk_isolation PRIMARY KEY (id_Photo)
+    --CONSTRAINT fk_code_departement FOREIGN KEY (code_departement) REFERENCES Departements(code_departement)
 );

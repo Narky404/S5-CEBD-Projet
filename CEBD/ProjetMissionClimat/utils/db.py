@@ -92,6 +92,34 @@ def insertDB():
              ['code_insee_departement', 'date_obs', 'tmin', 'tmax', 'tmoy']
         )
 
+        # On ajoute les Communes
+        read_csv_file(
+            "data/csv/Communes.csv", ';',
+            "insert into Communes values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            ['Code Commune', 'Code Département', 'Commune', 'Statut', 'Altitude Moyenne', 'Population', 'Superficie', 'Code Canton', 'Code Arrondissement']
+        )
+
+        # On ajoute les Isolations
+        read_csv_file(
+             "data/csv/Isolation.csv", ';',
+             "insert into Isolations (cout_total_HT_Isolation, cout_induit_HT_Isolation, annee_Isolation, type_logement_Isolation, annee_construction_logement, code_region, code_departement, poste, isolant, epaisseur, surface_isolation) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+             ['cout_total_ht', 'cout_induit_ht', 'annee_travaux', 'type_logement', 'annee_construction', 'code_region', 'code_departement', 'poste_isolation', 'isolant', 'epaisseur', 'surface' ]
+        )
+        # On ajoute les Chauffages
+        read_csv_file(
+             "data/csv/Chauffage.csv", ';',
+             "insert into Chauffages (cout_total_HT_Chauffage, cout_induit_HT_Chauffage, annee_Chauffage, type_logement_Chauffage, annee_construction_logement, code_region, code_departement, energie_av_travaux, energie_installee, generateur, type_chaudiere) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+             ['cout_total_ht', 'cout_induit_ht', 'annee_travaux', 'type_logement', 'annee_construction', 'code_region', 'code_departement', 'energie_chauffage_avt_travaux', 'energie_chauffage_installee', 'generateur', 'type_chaudiere' ]
+        )
+        # On ajoute les Photovoltaiques
+        read_csv_file(
+             "data/csv/Photovoltaique.csv", ';',
+             "insert into Photovoltaiques (cout_total_HT_Photovoltaique, cout_induit_HT_Photovoltaique, annee_Photovoltaique, type_logement_Photovoltaique, annee_construction_logement, code_region, code_departement, puissance_installee, type_panneaux) values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+             ['cout_total_ht', 'cout_induit_ht', 'annee_travaux', 'type_logement', 'annee_construction', 'code_region', 'code_departement', 'puissance_installee', 'type_panneaux' ]
+        )
+        
+
+
     except Exception as e:
         print ("L'erreur suivante s'est produite lors de l'insertion des données : " + repr(e) + ".")
     else:
