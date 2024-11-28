@@ -36,7 +36,8 @@ CREATE TABLE Communes (
     code_canton_commune INTEGER,
     code_arrondissement_commune INTEGER,
     CONSTRAINT pk_communes PRIMARY KEY (code_commune, code_departement),
-    CONSTRAINT fk_Communes FOREIGN KEY (code_departement) REFERENCES Departements(code_departement)
+    CONSTRAINT fk_Communes FOREIGN KEY (code_departement) REFERENCES Departements(code_departement),
+    CONSTRAINT ch_Communes CHECK (superficie_commune > 0)
 );
 
 --CREATE TABLE Travaux (  id_travaux INTEGER AUTOINCREMENT,  cout_total_HT_travaux FLOAT,  cout_induit_HT_travaux FLOAT,  annee_travaux INTEGER,  type_logement_travaux TEXT,  annee_construction_logement INTEGER,
@@ -57,12 +58,16 @@ CREATE TABLE Isolations(
     annee_construction_logement INTEGER,
     code_region INTEGER, --nous somme dans la regle 1 to Many
     code_departement TEXT, -- cas des 0..1 to Many
-    poste TEXT,
-    isolant TEXT,
+    poste TEXT CHECK (poste IN('COMBLE PERDUES', 'ITI', 'ITE', 'RAMPANTS', 'SARKING', 'TOITURE TERRASSE', 'PLANCHER BAS', NULL)),
+    isolant TEXT CHECK ( isolant IN('AUTRES', 'LAINE VEGETALE', 'LAINE MINERALE', 'PLASTIQUE', NULL)),
     epaisseur INTEGER,
     surface_isolation FLOAT,
+    
     CONSTRAINT fk_Isolations_departement FOREIGN KEY (code_departement) REFERENCES Departements(code_departement),
-    CONSTRAINT fk_Isolations_region FOREIGN KEY (code_region) REFERENCES Regions(code_region)
+    CONSTRAINT fk_Isolations_region FOREIGN KEY (code_region) REFERENCES Regions(code_region),
+    CONSTRAINT ch_Isolation_eppaisseru CHECK (epaisseur > 0 OR epaisseur == NULL),
+    
+    CONSTRAINT ch_Isolation_cout CHECK (cout_total_HT_Isolation > 0 AND (cout_induit_HT_Isolation > 0 OR cout_induit_HT_Isolation == NULL) )
 );
 
 CREATE TABLE Chauffages(
@@ -74,12 +79,15 @@ CREATE TABLE Chauffages(
     annee_construction_logement INTEGER,
     code_region INTEGER, --nous somme dans la regle 1 to Many
     code_departement TEXT, -- cas des 0..1 to Many
-    energie_av_travaux TEXT,
-    energie_installee TEXT,
-    generateur TEXT,
-    type_chaudiere TEXT,
+    energie_av_travaux TEXT CHECK ( energie_av_travaux IN ( 'AUTRES', 'BOIS', 'ELECTRICITE', 'FIOUL', 'GAZ', NULL)),
+    energie_installee TEXT CHECK ( energie_installee IN ( 'AUTRES', 'BOIS', 'ELECTRICITE', 'FIOUL', 'GAZ', NULL)),
+    generateur TEXT CHECK ( generateur IN ( 'AUTRES', 'CHAUDIERE', 'INSERT', 'PAC', 'POELE', 'RADIATEUR', NULL)),
+    type_chaudiere TEXT CHECK ( type_chaudiere IN ('STANDARD', 'AIR-EAU', 'A CONDENSATION', 'AUTRES', 'AIR-AIR', 'GEOTHERMIE', 'HPE', NULL)),
     CONSTRAINT fk_Chauffage_departement FOREIGN KEY (code_departement) REFERENCES Departements(code_departement),
-    CONSTRAINT fk_Chauffage_region FOREIGN KEY (code_region) REFERENCES Regions(code_region)
+    CONSTRAINT fk_Chauffage_region FOREIGN KEY (code_region) REFERENCES Regions(code_region),
+
+    CONSTRAINT ch_Chauffage_energie CHECK (energie_installee > 0 OR energie_installee == NULL),
+    CONSTRAINT ch_Chauffage_cout CHECK (cout_total_HT_Chauffage > 0 AND (cout_induit_HT_Chauffage > 0 OR cout_induit_HT_Chauffage == NULL) )
 );
 
 CREATE TABLE Photovoltaiques(
@@ -92,7 +100,10 @@ CREATE TABLE Photovoltaiques(
     code_region INTEGER, --nous somme dans la regle 1 to Many
     code_departement INTEGER, -- cas des 0..1 to Many
     puissance_installee INTEGER,
-    type_panneaux TEXT,
+    type_panneaux TEXT CHECK (type_panneaux IN ('MONOCRISTALLIN', 'POLYCRISTALLIN', NULL)),
     CONSTRAINT fk_Photovoltaiques FOREIGN KEY (code_departement) REFERENCES Departements(code_departement),
-    CONSTRAINT fk_Photovoltaiques_region FOREIGN KEY (code_region) REFERENCES Regions(code_region)
+    CONSTRAINT fk_Photovoltaiques_region FOREIGN KEY (code_region) REFERENCES Regions(code_region),
+
+    CONSTRAINT ch_Photovoltaique_puissance CHECK (puissance_installee > 0 OR puissance_installee == NULL),
+    CONSTRAINT ch_Photovoltaique_cout CHECK (cout_total_HT_Photovoltaique > 0 AND (cout_induit_HT_Photovoltaique > 0 OR cout_induit_HT_Photovoltaique == NULL) )
 );
