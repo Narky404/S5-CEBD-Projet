@@ -70,12 +70,22 @@ def insertDB():
             ['zone_climatique', 'code_departement']
         )
 
+
+         # On ajoute les Communes
+        read_csv_file(
+            "data/csv/Communes.csv", ';',
+            "insert into Communes values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            ['Code Commune', 'Code Département', 'Commune', 'Statut', 'Altitude Moyenne', 'Population', 'Superficie', 'Code Canton', 'Code Arrondissement']
+        )
+
         # On modifie les codes région des départements pour les codes des nouvelles régions
         read_csv_file(
             "data/csv/AnciennesNouvellesRegions.csv", ';',
             "update Departements set code_region = ? where code_region = ?",
             ['Nouveau Code', 'Anciens Code']
         )
+       
+
 
         # On supprime les anciennes régions, sauf si l'ancien code et le nouveau sont identiques (pour ne pas perdre les régions qui n'ont pas changé de code)
         read_csv_file(
@@ -92,12 +102,6 @@ def insertDB():
              ['code_insee_departement', 'date_obs', 'tmin', 'tmax', 'tmoy']
         )
 
-        # On ajoute les Communes
-        read_csv_file(
-            "data/csv/Communes.csv", ';',
-            "insert into Communes values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            ['Code Commune', 'Code Département', 'Commune', 'Statut', 'Altitude Moyenne', 'Population', 'Superficie', 'Code Canton', 'Code Arrondissement']
-        )
 
         # On ajoute les Isolations
         read_csv_file(
@@ -105,6 +109,7 @@ def insertDB():
              "insert into Isolations (cout_total_HT_Isolation, cout_induit_HT_Isolation, annee_Isolation, type_logement_Isolation, annee_construction_logement, code_region, code_departement, poste, isolant, epaisseur, surface_isolation) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
              ['cout_total_ht', 'cout_induit_ht', 'annee_travaux', 'type_logement', 'annee_construction', 'code_region', 'code_departement', 'poste_isolation', 'isolant', 'epaisseur', 'surface' ]
         )
+
         # On ajoute les Chauffages
         read_csv_file(
              "data/csv/Chauffage.csv", ';',
@@ -117,7 +122,6 @@ def insertDB():
              "insert into Photovoltaiques (cout_total_HT_Photovoltaique, cout_induit_HT_Photovoltaique, annee_Photovoltaique, type_logement_Photovoltaique, annee_construction_logement, code_region, code_departement, puissance_installee, type_panneaux) values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
              ['cout_total_ht', 'cout_induit_ht', 'annee_travaux', 'type_logement', 'annee_construction', 'code_region', 'code_departement', 'puissance_installee', 'type_panneaux' ]
         )
-        
 
 
     except Exception as e:
@@ -157,3 +161,24 @@ def read_csv_file(csvFile, separator, query, columns):
         except IntegrityError as err:
             print(err)
 
+
+#def read_csv_file_debug(csvFile, separator, query, columns):
+#    # Lecture du fichier CSV csvFile avec le séparateur separator
+#    # pour chaque ligne, exécution de query en la formatant avec les colonnes columns
+#    df = pandas.read_csv(csvFile, sep=separator)
+#    df = df.where(pandas.notnull(df), None)
+#
+#    cursor = data.cursor()
+#    for ix, row in df.iterrows():
+#        try:
+#            tab = []
+#            for i in range(len(columns)):
+#                # pour échapper les noms avec des apostrophes, on remplace dans les chaines les ' par ''
+#                if isinstance(row[columns[i]], str):
+#                    row[columns[i]] = row[columns[i]].replace("'","''")
+#                tab.append(row[columns[i]])
+#
+#            print(tuple(tab))
+#            cursor.execute(query, tuple(tab))
+#        except IntegrityError as err:
+#            print(err)
