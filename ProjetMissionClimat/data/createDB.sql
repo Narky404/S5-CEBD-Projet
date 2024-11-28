@@ -26,7 +26,7 @@ create table Mesures (
 --TODO Q4 Ajouter les créations des nouvelles tables
 
 CREATE TABLE Communes (
-    code_commune INTEGER PRIMARY KEY,
+    code_commune INTEGER,
     code_departement TEXT, --cas 1 to Many
     nom_commune TEXT,
     statut_commune TEXT,
@@ -34,9 +34,9 @@ CREATE TABLE Communes (
     population_commune INTEGER,
     superficie_commune INTEGER,
     code_canton_commune INTEGER,
-    code_arrondissement_commune INTEGER
-    --CONSTRAINT pk_commune PRIMARY KEY (code_commune),
-    --CONSTRAINT fk_code_departement FOREIGN KEY (code_departement) REFERENCES Departements(code_departement)
+    code_arrondissement_commune INTEGER,
+    CONSTRAINT pk_communes PRIMARY KEY (code_commune, code_departement),
+    CONSTRAINT fk_Communes FOREIGN KEY (code_departement) REFERENCES Departements(code_departement)
 );
 
 --CREATE TABLE Travaux (  id_travaux INTEGER AUTOINCREMENT,  cout_total_HT_travaux FLOAT,  cout_induit_HT_travaux FLOAT,  annee_travaux INTEGER,  type_logement_travaux TEXT,  annee_construction_logement INTEGER,
@@ -60,9 +60,9 @@ CREATE TABLE Isolations(
     poste TEXT,
     isolant TEXT,
     epaisseur INTEGER,
-    surface_isolation FLOAT
-    --CONSTRAINT pk_isolation PRIMARY KEY (id_Isolation)
-    --CONSTRAINT fk_code_departement FOREIGN KEY (code_departement) REFERENCES Departements(code_departement)
+    surface_isolation FLOAT,
+    CONSTRAINT fk_Isolations_departement FOREIGN KEY (code_departement) REFERENCES Departements(code_departement),
+    CONSTRAINT fk_Isolations_region FOREIGN KEY (code_region) REFERENCES Regions(code_region)
 );
 
 CREATE TABLE Chauffages(
@@ -77,9 +77,9 @@ CREATE TABLE Chauffages(
     energie_av_travaux TEXT,
     energie_installee TEXT,
     generateur TEXT,
-    type_chaudiere TEXT
-    --CONSTRAINT pk_isolation PRIMARY KEY (id_Chauffage)
-    --CONSTRAINT fk_code_departement FOREIGN KEY (code_departement) REFERENCES Departements(code_departement)
+    type_chaudiere TEXT,
+    CONSTRAINT fk_Chauffage_departement FOREIGN KEY (code_departement) REFERENCES Departements(code_departement),
+    CONSTRAINT fk_Chauffage_region FOREIGN KEY (code_region) REFERENCES Regions(code_region)
 );
 
 CREATE TABLE Photovoltaiques(
@@ -90,9 +90,9 @@ CREATE TABLE Photovoltaiques(
     type_logement_Photovoltaique TEXT,
     annee_construction_logement INTEGER,
     code_region INTEGER, --nous somme dans la regle 1 to Many
-    code_departement TEXT, -- cas des 0..1 to Many
+    code_departement INTEGER, -- cas des 0..1 to Many
     puissance_installee INTEGER,
-    type_panneaux TEXT
-    --CONSTRAINT pk_isolation PRIMARY KEY (id_Photo)
-    --CONSTRAINT fk_code_departement FOREIGN KEY (code_departement) REFERENCES Departements(code_departement)
+    type_panneaux TEXT,
+    CONSTRAINT fk_Photovoltaiques FOREIGN KEY (code_departement) REFERENCES Departements(code_departement),
+    CONSTRAINT fk_Photovoltaiques_region FOREIGN KEY (code_region) REFERENCES Regions(code_region)
 );
