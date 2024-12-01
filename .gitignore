@@ -1,6 +1,2 @@
 /.vscode
-/ALGO5
-/ALM
-/AS
-/BD
-/PROG5
+__pycache__/

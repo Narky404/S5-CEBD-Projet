@@ -35,35 +35,43 @@ class Window(tk.Toplevel):
         display.defineGridDisplay(self, 1, 1)
         #granularité en jours
         query ="""
-            WITH Rec_toute_annee AS( 
-                SELECT date_mesure, min(temperature_moy_mesure) AS temp_min, max(temperature_moy_mesure) AS temp_max
+            WITH record_fraicheur_annees AS (
+                SELECT date_mesure, min(temperature_min_mesure) AS temp_min
                 FROM Mesures
-                GROUP BY date_mesure HAVING strftime('%m %d', date_mesure)
-            ),
-            Dep_rec_max_2018 AS(
-                SELECT code_departement,max(temperature_moy_mesure) AS temp_max
+                GROUP BY date_mesure
+            ), record_chaleur_annees AS (
+                SELECT date_mesure, max(temperature_max_mesure) AS temp_max
+                FROM Mesures
+                GROUP BY date_mesure
+            ),dep_moy_2018 AS (
+                SELECT date_mesure, code_departement, avg(temperature_moy_mesure) AS temperature_moy
                 FROM Mesures JOIN Departements USING (code_departement)
                 WHERE strftime('%Y', date_mesure) = '2018' AND zone_climatique='H1'
                 GROUP BY code_departement
-                ORDER BY temp_max DESC
+            ), dep_chaud_record AS (
+                SELECT code_departement
+                FROM dep_moy_2018
+                ORDER BY temperature_moy DESC
                 LIMIT 1
-            ),
-            Dep_rec_min_2018 AS(
-                SELECT code_departement,min(temperature_moy_mesure) AS temp_min
-                FROM Mesures JOIN Departements USING (code_departement)
-                WHERE strftime('%Y', date_mesure) = '2018' AND zone_climatique='H1'
-                GROUP BY code_departement
-                ORDER BY temp_min ASC
+            ), dep_froid_record AS (
+                SELECT code_departement
+                FROM dep_moy_2018
+                ORDER BY temperature_moy ASC
                 LIMIT 1
+            ), chaud_record_temp AS (
+                SELECT date_mesure, temperature_moy_mesure AS temperature_max_H1
+                FROM Mesures
+                WHERE code_departement IN dep_chaud_record AND strftime('%Y', date_mesure) = '2018'
+            ), froid_record_temp AS (
+                SELECT date_mesure, temperature_moy_mesure AS temperature_min_H1
+                FROM Mesures
+                WHERE code_departement IN dep_froid_record AND strftime('%Y', date_mesure) = '2018'
             )
-            SELECT R.date_mesure, temp_min, temp_max, temperature_moy_mesure AS dep_min, 0
-            FROM Rec_toute_annee R JOIN Mesures M ON (M.date_mesure=R.date_mesure)
-            WHERE strftime('%Y', R.date_mesure) = '2018' AND dep_min IN Dep_rec_min_2018
-                
-        """
-        """
-            temperature_min_H1_2018, temperature_max_H1_2018
-            strftime('%Y', date_mesure) = '2018'
+            SELECT F.date_mesure, temp_min, temp_max, temperature_min_H1, temperature_max_H1
+            FROM record_fraicheur_annees F 
+                JOIN record_chaleur_annees C ON (F.date_mesure = C.date_mesure)
+                JOIN froid_record_temp F18 ON (F18.date_mesure = F.date_mesure)
+                JOIN chaud_record_temp C18 ON (C18.date_mesure = F.date_mesure) 
         """
         # Extraction des données et affichage dans le tableau
         result = []
